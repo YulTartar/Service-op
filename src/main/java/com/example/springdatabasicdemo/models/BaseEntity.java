@@ -1,19 +1,17 @@
 package com.example.springdatabasicdemo.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 @MappedSuperclass
-public abstract class BaseEntity {
+@Getter
+@Setter
+public abstract class BaseEntity implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    protected int id;
-
-    public int getId() {
-        return id;
-    }
-
-    protected void setId(int id) {
-        this.id = id;
-    }
+    protected Long id;
 }

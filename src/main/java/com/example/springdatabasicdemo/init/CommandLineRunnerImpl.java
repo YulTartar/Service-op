@@ -1,10 +1,7 @@
 package com.example.springdatabasicdemo.init;
 
-import com.example.springdatabasicdemo.dtos.*;
-import com.example.springdatabasicdemo.services.AvailabilityService;
-import com.example.springdatabasicdemo.services.PlaceService;
-import com.example.springdatabasicdemo.services.ShopService;
-import com.example.springdatabasicdemo.services.StorageService;
+import com.example.springdatabasicdemo.models.Client;
+import com.example.springdatabasicdemo.models.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,60 +9,76 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Optional;
 
+
+import com.example.springdatabasicdemo.dtos.QueueDTO;
+import com.example.springdatabasicdemo.dtos.ClientDTO;
+import com.example.springdatabasicdemo.dtos.WindowDTO;
+import com.example.springdatabasicdemo.dtos.TicketDTO;
+import com.example.springdatabasicdemo.services.QueueService;
+import com.example.springdatabasicdemo.services.ClientService;
+import com.example.springdatabasicdemo.services.WindowService;
+import com.example.springdatabasicdemo.services.TicketService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+
 @Component
 public class CommandLineRunnerImpl implements CommandLineRunner {
 
     @Autowired
-    private AvailabilityService availabilityService;
+    private QueueService queueService;
 
     @Autowired
-    private ShopService shopService;
+    private ClientService clientService;
 
     @Autowired
-    private StorageService storageService;
+    private WindowService windowService;
 
     @Autowired
-    private PlaceService placeService;
-
-    @Autowired
-    private PlaceService goodsService;
+    private TicketService ticketService;
 
     @Override
     public void run(String... args) throws Exception {
         seedData();
     }
 
-    private void seedData() throws IOException {
-        //Добавление в БД записей
-        ShopDto s1 = new ShopDto(0, "Apax", 3, "SHOP", "Одинцово", 300, 50, "Постамат", 5);
-        StorageDto s2 = new StorageDto(0, "Пром", 1000, "STORAGE", "Владивосток", 500, 50, 15, 5);
-        StorageDto s3 = new StorageDto(0, "Склад Фруктового райа", 500, "STORAGE", "Московская обл., г. Сергиев Посад, ул. Цветочная, дом 7", 4000, 25, 800, 7);
+    private void seedData() {
+        // Создание и сохранение окон
+        WindowDTO window1 = new WindowDTO(0L, 1); // Примерный номер окна
+        WindowDTO window2 = new WindowDTO(0L, 2); // Примерный номер окна
 
-        shopService.register(s1);
-        storageService.register(s2);
-        storageService.register(s3);
+        window1 = windowService.addWindow(window1);
+        window2 = windowService.addWindow(window2);
 
-        System.out.println(placeService.findPlace(1).get());
-        System.out.println(placeService.findPlace(1).get());
+        // Создание и сохранение клиентов
+        ClientDTO client1 = new ClientDTO(0L, "Иван Иванов", null);
+        ClientDTO client2 = new ClientDTO(0L, "Мария Петрова", null);
 
-        Optional<PlaceDto> pO1 = placeService.findPlace(1);
-        Optional<PlaceDto> pO2 = placeService.findPlace(2);
+        client1 = clientService.addClient(client1);
+        client2 = clientService.addClient(client2);
 
-        PlaceDto p1 = pO1.get();
-        PlaceDto p2 = pO2.get();
 
-        GoodsDto g1 = new GoodsDto(0,"Молоко Домик в Деревне", "Свежее пастеризованное молоко", "10.55.78.123", "10.55", "EAN-8", "01234567", new java.sql.Date(127, 12, 14));
-        GoodsDto g2 = new GoodsDto(0,"Морковь", "Свежие и сочные моркови", "10.50.12.005", "10.50", "EAN-13", "3256789045172", new java.sql.Date(122, 12, 14));
-        GoodsDto g3 = new GoodsDto(0, "Яблоки Голден", "Сочные и сладкие яблоки сорта Голден", "10.30.19.002", "10.30", "EAN-13", "4867529130456", new java.sql.Date(100, 12, 14));
+        QueueDTO queue1 = queueService.createQueueForWindow(window1.getId());
+        QueueDTO queue2 = queueService.createQueueForWindow(window2.getId());
 
-        AvailabilityDto a1 = new AvailabilityDto(0, 10, p1, g1, new java.sql.Date(121, 12, 14));
-        AvailabilityDto a2 = new AvailabilityDto(0, 15, p2, g2, new java.sql.Date(121, 3, 28));
-        AvailabilityDto a3 = new AvailabilityDto(0, 10, p2, g3, new java.sql.Date(122, 9, 14));
 
-        availabilityService.register(a1);
-        availabilityService.register(a2);
-        availabilityService.register(a3);
+        System.out.println("Clients:");
+        List<ClientDTO> clients = clientService.getAllClients();
+        clients.forEach(System.out::println);
 
-        System.out.println(availabilityService.findAvalabilitysByPlace("Пром"));
+        System.out.println("Tickets:");
+        List<TicketDTO> tickets = ticketService.getAllTickets(); // Предположим, что этот метод существует в TicketService
+        tickets.forEach(System.out::println);
+
+        System.out.println("Queues:");
+        List<QueueDTO> queues = queueService.getAllQueues();
+        queues.forEach(System.out::println);
+
+        System.out.println("Windows:");
+        List<WindowDTO> windows = windowService.getAllWindows();
+        windows.forEach(System.out::println);
     }
 }
