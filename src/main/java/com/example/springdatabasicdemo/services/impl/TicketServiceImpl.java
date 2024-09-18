@@ -12,7 +12,9 @@ import com.example.springdatabasicdemo.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -71,6 +73,12 @@ public class TicketServiceImpl implements TicketService {
                     ticketDTO.setWindow(new WindowDTO(ticket.getWindow().getId(), ticket.getWindow().getWindowNumber()));
                     return ticketDTO;
                 });
+    }
+    @Override
+    public List<TicketDTO> getAllTickets() {
+        return ticketRepository.findAll().stream()
+                .map(ticket -> new TicketDTO(ticket.getId(), ticket.getTicketNumber(), ticket.getStatus().getCode(), new WindowDTO(ticket.getWindow().getId(), ticket.getWindow().getWindowNumber())))
+                .collect(Collectors.toList());
     }
 
     @Override

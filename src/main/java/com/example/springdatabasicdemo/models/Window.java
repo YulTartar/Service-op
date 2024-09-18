@@ -12,14 +12,14 @@ import org.hibernate.annotations.Cascade;
 @Getter
 @Setter
 @Entity
-@Table(name = "window")
+@Table(name =  "\"window\"")
 public class Window extends BaseEntity {
 
     @Column(name = "window_number", nullable = false)
     private int windowNumber;
 
-    @Column(name = "status", nullable = false)
-    private String status;
+    @Column(name = "status")
+    private String status ;
 
     @Override
     public String toString() {
